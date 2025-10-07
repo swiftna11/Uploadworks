@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earnings Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #FFE85C;
+            color: #000;
+        }
+ 
+        .wrap {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+ 
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+ 
+        .header .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+ 
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+ 
+        #usernameDisplay {
+            font-weight: bold;
+        }
+ 
+        .currency-select {
+            font-size: 16px;
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #fff;
+            cursor: pointer;
+        }
+ 
+        .earnings {
+            margin: 15px 0 6px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+ 
+        .money {
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+ 
+        .eye-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+ 
+        #pinInput {
+            background: #fff;
+            /* white background */
+            color: #000;
+            /* black text */
+            border: 1px solid #ccc;
+            /* light border */
+            border-radius: 6px;
+            /* softer corners */
+            padding: 10px;
+            /* space inside */
+            font-size: 16px;
+            /* readable text */
+            width: 100%;
+            /* full width */
+            box-sizing: border-box;
+            /* avoids overflow */
+        }
+ 
+        .pills {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 8px;
+        }
+ 
+        .pill {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+ 
+        .panel {
+            background: #222;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 10px;
+        }
+ 
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+ 
+        .panel input,
+        .panel select {
+            width: 90%;
+            padding: 10px;
+            border-radius: 20px;
+            border: none;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+ 
+        .enter {
+            background: green;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+ 
+        .fineprint {
+            margin-top: 10px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+ 
+        .footer-pills {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 8px;
+        }
+ 
+        .bigpill {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+ 
+        #withdrawBtn {
+            width: 170px;
+            /* make it wider */
+            padding: 14px 22px;
+            /* make it taller */
+            font-size: bold;
+            /* bigger text */
+            background: #000;
+            /* color:  #fff; */
+        }
+ 
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+ 
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+ 
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+ 
+        /* Modal (popup) */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+ 
+        .modal {
+            background: #fff;
+            color: #000;
+            padding: 18px;
+            border-radius: 10px;
+            width: 70%;
+            max-width: 380px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        }
+ 
+        .modal h3 {
+            margin: 0 0 8px;
+        }
+ 
+        .modal p {
+            margin: 8px 0;
+        }
+ 
+        .modal .note {
+            background: #fffbe6;
+            border: 1px solid #e6d200;
+            padding: 8px;
+            border-radius: 6px;
+        }
+ 
+        .modal .row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+ 
+        .modal button {
+            flex: 1;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+ 
+        .modal .primary {
+            background: #000;
+            color: #fff;
+        }
+ 
+        .modal .danger {
+            background: #dc3545;
+            color: #fff;
+        }
+ 
+        .modal .ghost {
+            background: #f1f1f1;
+        }
+ 
+        /* Toasts */
+        .toast {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s ease;
+            z-index: 10000;
+        }
+ 
+        .toast.show {
+            opacity: 1;
+        }
+ 
+        /* Eye toggle (pure CSS, no emoji, no PNG) */
+        .eye-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: relative;
+        }
+ 
+        /* Eye open */
+        .eye-btn.eye-open::before {
+            content: "";
+            position: absolute;
+            width: 24px;
+            height: 14px;
+            border: 2px solid #000;
+            border-radius: 50% / 50%;
+            top: 6px;
+            left: 1px;
+        }
+ 
+        .eye-btn.eye-open::after {
+            content: "";
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+            top: 11px;
+            left: 10px;
+        }
+ 
+        /* Eye closed (a slash) */
+        .eye-btn.eye-closed::before {
+            content: "";
+            position: absolute;
+            width: 26px;
+            height: 2px;
+            background: #000;
+            top: 13px;
+            left: 0;
+            transform: rotate(45deg);
+        }
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    text-transform: uppercase;
+cursor: pointer;
+}
+.withdraw-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background: #fff;
+    color: #000;
+    box-sizing: border-box;
+    margin: 10px 0;
+}
+
+.withdraw-input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+    </style>
+</head>
+ 
+<body>
+    <div class="wrap">
+        <div class="header">
+            <div class="left">
+                <div class="avatar" id="avatarBadge"></div>
+                <div id="usernameDisplay">Hi User</div>
+            </div>
+            <select class="currency-select" id="currency">
+                <option value="usd" selected>$ USD</option>
+                <option value="php">₱ PHP</option>
+                <option value="gbp">£ GBP</option>
+                <option value="eur">€ EUR</option>
+            </select>
+        </div>
+        <div class="earnings">Earnings:</div>
+        <div class="money" id="earningsAmount">
+            <span id="balanceValue">$0.00</span>
+            <button class="eye-btn eye-open" id="toggleEye" aria-label="Toggle balance visibility"></button>
+        </div>
+ 
+        <div class="pills">
+            <button class="pill" id="addPaymentBtn">Add payment method</button>
+            <button class="pill" id="withdrawBtn">Withdraw</button>
+        </div>
+ 
+        <!-- Payment panel -->
+        <div class="panel" id="paymentPanel" style="display:none;">
+            <h2>Select Payment Method</h2>
+            <select id="paymentSelect">
+                <option value="">--Choose--</option>
+                <option value="paypal">PayPal</option>
+                <option value="gcash">Gcash</option>
+                <option value="bank">Bank</option>
+            </select>
+            <input type="text" id="paymentInput" placeholder="">
+            <button class="enter" id="savePayment">Save</button>
+            <div class="fineprint" id="paymentSaved"></div>
+        </div>
+ 
+        <!-- Pin panel -->
+        <div class="panel">
+            <h2>Enter activation pin here</h2>
+            <input type="text" id="pinInput" placeholder="Enter Pin">
+            <button class="enter" id="enterPinBtn">Enter</button>
+            <div class="fineprint">
+                To ensure a smooth and secure withdrawal process, an activation fee is required before
+                earnings can be withdrawn. Tap "See more" for details.
+            </div>
+            <div id="pinMessage"></div>
+        </div>
+ 
+        <div class="footer-pills">
+            <button class="bigpill" id="buyPinBtn">Click here to buy activation pin</button>
+            <button class="bigpill" id="seeMoreBtn">See more</button>
+        </div>
+    </div>
+ 
+    <!-- Modal -->
+    <div class="modal-backdrop" id="modalBackdrop">
+        <div class="modal" id="modalBox"></div>
+    </div>
+ 
+    <div class="toast" id="toast"></div>
+ 
+    <!-- Firebase + Firestore -->
+<script type="module">
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  where,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBT-uB0tNUGOZGC8V2I4iP8QUXbXOHu44I",
+  authDomain: "newbie-d6a5c.firebaseapp.com",
+  projectId: "newbie-d6a5c",
+  storageBucket: "newbie-d6a5c.firebasestorage.app",
+  messagingSenderId: "931411577096",
+  appId: "1:931411577096:web:8380459a4564c83ff8c4bd"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// -------- DOM --------
+let username = null;
+let earnings = 0;
+let activationPin = null;
+let pinEntered = false;
+let isHidden = false;
+
+const usernameDisplay = document.getElementById("usernameDisplay");
+const balanceValue = document.getElementById("balanceValue");
+const currencySelect = document.getElementById("currency");
+const toggleEye = document.getElementById("toggleEye");
+const withdrawBtn = document.getElementById("withdrawBtn");
+const pinInput = document.getElementById("pinInput");
+const enterPinBtn = document.getElementById("enterPinBtn");
+const pinMessage = document.getElementById("pinMessage");
+const addPaymentBtn = document.getElementById("addPaymentBtn");
+const paymentPanel = document.getElementById("paymentPanel");
+const paymentSelect = document.getElementById("paymentSelect");
+const paymentInput = document.getElementById("paymentInput");
+const savePayment = document.getElementById("savePayment");
+const paymentSaved = document.getElementById("paymentSaved");
+const buyPinBtn = document.getElementById("buyPinBtn");
+const seeMoreBtn = document.getElementById("seeMoreBtn");
+const modalBackdrop = document.getElementById("modalBackdrop");
+const modalBox = document.getElementById("modalBox");
+const toast = document.getElementById("toast");
+
+// -------- Helpers --------
+const rates = { usd: 1, php: 56, gbp: 0.79, eur: 0.92 };
+const symbols = { usd: "$", php: "₱", gbp: "£", eur: "€" };
+
+function money(v, currencyKey) {
+  const nf = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  return `${symbols[currencyKey]}${nf.format(v)}`;
+}
+
+function showToast(text) {
+  toast.textContent = text;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+function openModal(html) {
+  modalBox.innerHTML = html;
+  modalBackdrop.style.display = "flex";
+}
+function closeModal() {
+  modalBackdrop.style.display = "none";
+  modalBox.innerHTML = "";
+}
+
+// -------- Firestore Helpers --------
+async function saveUserData(data) {
+  await setDoc(doc(db, "users", username), data, { merge: true });
+}
+async function loadUserData() {
+  const ref = doc(db, "users", username);
+  const snap = await getDoc(ref);
+  return snap.exists() ? snap.data() : null;
+}
+
+// -------- Balance Display --------
+function updateBalance() {
+  const selected = currencySelect.value;
+  const converted = earnings * rates[selected];
+  balanceValue.textContent = isHidden ? "••••••" : money(converted, selected);
+}
+toggleEye.addEventListener("click", () => {
+  isHidden = !isHidden;
+  updateBalance();
+});
+currencySelect.addEventListener("change", updateBalance);
+
+// -------- Payment Methods --------
+addPaymentBtn.addEventListener("click", () => {
+  paymentPanel.style.display =
+    paymentPanel.style.display === "none" ? "block" : "none";
+});
+paymentSelect.addEventListener("change", () => {
+  if (paymentSelect.value === "paypal")
+    paymentInput.placeholder = "Enter PayPal username";
+  if (paymentSelect.value === "gcash")
+    paymentInput.placeholder = "Enter GCash number";
+  if (paymentSelect.value === "bank")
+    paymentInput.placeholder = "Enter Bank account number";
+});
+savePayment.addEventListener("click", async () => {
+  if (paymentSelect.value && paymentInput.value.trim()) {
+    await saveUserData({
+      paymentMethod: paymentSelect.value,
+      paymentDetail: paymentInput.value
+    });
+    paymentSaved.textContent = `Saved: ${paymentSelect.value} - ${paymentInput.value}`;
+    showToast("✅ Payment method saved");
+  } else {
+    showToast("⚠️ Please select a method and enter details");
+  }
+});
+
+// -------- Pin Check (One-Time Use) --------
+enterPinBtn.addEventListener("click", async () => {
+  const data = await loadUserData();
+  activationPin = data?.pin || null;
+
+  if (!activationPin) {
+    pinMessage.innerHTML = `<div class="message error">⚠️ No activation pin assigned or already used.</div>`;
+    return;
+  }
+
+  if (pinInput.value.trim() === activationPin) {
+    pinMessage.innerHTML = `<div class="message success">✅ Pin correct. You can now withdraw.</div>`;
+    pinEntered = true;
+
+    // **Mark the pin as used immediately**
+    await updateDoc(doc(db, "users", username), {
+      pin: null, // invalidate the pin
+      pinUsedAt: serverTimestamp() // optional: track usage
+    });
+
+    // Optional: disable input to prevent reuse
+    pinInput.disabled = true;
+    enterPinBtn.disabled = true;
+    showToast("✅ Pin activated (one-time use).");
+  } else {
+    pinMessage.innerHTML = `<div class="message error">❌ Incorrect pin.</div>`;
+    pinEntered = false;
+  }
+});
+
+// -------- Withdraw --------
+withdrawBtn.addEventListener("click", async () => {
+  if (!pinEntered) {
+    showToast("⚠️ Please enter correct activation pin first.");
+    return;
+  }
+
+  const data = await loadUserData();
+  if (!data?.paymentMethod || !data?.paymentDetail) {
+    showToast("⚠️ Please add a payment method before withdrawing.");
+    return;
+  }
+
+  openModal(`
+      <h3>Withdraw Funds</h3>
+      <p>Payment Method: <strong>${data.paymentMethod}</strong> (${data.paymentDetail})</p>
+      <p>Enter amount to withdraw (minimum $35):</p>
+      <input type="number" id="withdrawAmountInput" placeholder="Enter amount" min="35"
+          style="width:70%;padding:10px;border-radius:6px;border:1px solid #ccc;font-size:16px;">
+      <div class="row">
+          <button class="primary" id="confirmWithdraw">Withdraw</button>
+          <button class="ghost" id="cancelWithdraw">Cancel</button>
+      </div>
+  `);
+
+  const confirmBtn = document.getElementById("confirmWithdraw");
+  const cancelBtn = document.getElementById("cancelWithdraw");
+
+  cancelBtn.onclick = closeModal;
+
+  confirmBtn.onclick = async () => {
+    const inputEl = document.getElementById("withdrawAmountInput");
+    const amount = parseFloat(inputEl.value);
+
+    if (isNaN(amount) || amount < 35) {
+      showToast("⚠️ Minimum withdrawal is $35.");
+      return;
+    }
+
+    if (amount > earnings) {
+      showToast("⚠️ You cannot withdraw more than your current balance.");
+      return;
+    }
+
+    const newBalance = earnings - amount;
+    await updateDoc(doc(db, "users", username), { earnings: newBalance });
+
+    const txData = {
+      username,
+      amount,
+      type: "withdrawal",
+      paymentMethod: data.paymentMethod,
+      paymentDetail: data.paymentDetail,
+      requestedAt: serverTimestamp(),
+      status: "pending"
+    };
+
+    await addDoc(collection(db, "withdrawRequests"), txData);
+    await addDoc(collection(db, "transactions"), txData);
+
+    closeModal();
+    showToast(`✅ Withdrawal of $${amount.toFixed(2)} requested.`);
+  };
+});
+
+// -------- Buy Pin --------
+buyPinBtn.addEventListener("click", async () => {
+  openModal(`
+      <h3>Buy Activation Pin</h3>
+      <p>Contact your project manager to buy pin.</p>
+      <div class="row">
+        <button class="primary" id="buyHereBtn">Buy Here</button>
+        <button class="ghost" id="closeBuy">Close</button>
+      </div>
+    `);
+  document.getElementById("closeBuy").onclick = closeModal;
+  document.getElementById("buyHereBtn").onclick = async () => {
+    await addDoc(collection(db, "pinRequests"), {
+      username,
+      status: "requested",
+      userNote: "User requested payment info",
+      createdAt: serverTimestamp()
+    });
+    showToast("📨 Request sent to admin");
+    closeModal();
+  };
+});
+seeMoreBtn.addEventListener("click", () => {
+  showToast("ℹ️ The activation pin ensures security before withdrawal.");
+});
+
+// -------- Listen for Pin Responses --------
+function listenForPinResponses() {
+  onSnapshot(
+    query(collection(db, "pinRequests"), where("username", "==", username)),
+    (snapshot) => {
+      snapshot.docChanges().forEach(change => {
+        const data = change.doc.data();
+        if (data.status === "responded" && data.paymentDetails) {
+          openModal(`
+              <h3>Payment Details</h3>
+              <p><strong>Note:</strong> ${data.adminNote || ""}</p>
+              <p><strong>Instructions:</strong><br>${(data.paymentDetails || "").replace(/\n/g,"<br>")}</p>
+              <div class="row">
+                <button class="primary" id="paidBtn">I Paid</button>
+                <button class="danger" id="cancelBtn">Cancel</button>
+              </div>
+            `);
+
+          document.getElementById("paidBtn").onclick = async () => {
+            await updateDoc(doc(db, "pinRequests", change.doc.id), {
+              status: "paid",
+              userDecision: "paid",
+              userDecidedAt: serverTimestamp()
+            });
+            showToast("✅ Marked as Paid");
+            closeModal();
+          };
+
+          document.getElementById("cancelBtn").onclick = async () => {
+            await updateDoc(doc(db, "pinRequests", change.doc.id), {
+              status: "cancelled",
+              userDecision: "cancelled",
+              userDecidedAt: serverTimestamp()
+            });
+            showToast("❌ Request Cancelled");
+            closeModal();
+          };
+        }
+      });
+    }
+  );
+}
+
+// -------- Auth and Dashboard Init --------
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    username = user.email.toLowerCase();
+    usernameDisplay.textContent = "Hi " + username;
+
+    const avatarBadge = document.getElementById("avatarBadge");
+    const initial = username.trim()[0] || "?";
+    avatarBadge.textContent = initial.toUpperCase();
+
+    avatarBadge.addEventListener("click", () => {
+      openModal(`
+          <h3>Profile</h3>
+          <p>${username}</p>
+          <div class="row">
+              <button class="danger" id="logoutConfirm">Logout</button>
+              <button class="ghost" id="closeProfile">Close</button>
+          </div>
+      `);
+
+      document.getElementById("logoutConfirm").onclick = () => {
+        signOut(auth).then(() => {
+          localStorage.removeItem("loggedInUser");
+          window.location.href = "index.html";
+        }).catch((error) => {
+          console.error("Logout error:", error);
+          showToast("⚠️ Error logging out.");
+        });
+      };
+      document.getElementById("closeProfile").onclick = closeModal;
+    });
+
+    initDashboard();
+  } else {
+    window.location.href = "index.html";
+  }
+});
+
+async function initDashboard() {
+  usernameDisplay.textContent = "Hi " + username;
+
+  const userRef = doc(db, "users", username);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) {
+    await saveUserData({ earnings: 5, createdAt: serverTimestamp() });
+  }
+
+  onSnapshot(userRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      earnings = data.earnings || 5;
+      activationPin = data.pin || null;
+      updateBalance();
+    }
+  });
+
+  listenForPinResponses();
+}
+
+initDashboard();
+</script>
+</body>
+ 
+</html>
